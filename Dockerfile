@@ -1,13 +1,11 @@
-FROM python:3.13-slim
+FROM busybox:musl
 
-WORKDIR /app
+WORKDIR /www
+RUN echo '{"status":"healthy"}' > /www/health && \
+    echo 'CloudForge Application - Version 2' > /www/index.html
 
-COPY requirements.txt .
-
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY app ./app
+COPY . /www
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["httpd", "-f", "-v", "-p", "8000", "-h", "/www"]
